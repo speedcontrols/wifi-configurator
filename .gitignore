@@ -1,49 +1,6 @@
-*.txt
-
-
-# Object files
-*.o
-*.ko
-*.obj
-*.elf
-
-*.sdf
-*.opendf
-
-# Precompiled Headers
+.pioenvs
+.piolibdeps
+.clang_complete
+.gcc-flags.json
+tools/minify
 *.gch
-*.pch
-
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
-
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
-
-# Executables
-*.elf
-*.bin
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
-
-# Debug files
-*.dSYM/
-*.launch
-
-# Directories
-.settings/
-libs/
-obj/
-bin/
-Debug/
-.vs/

@@ -1,0 +1,17 @@
+#pData {
+    display: none;
+}
+#pError {
+
+}
+#fData {
+    display: none;
+}
+input {
+    padding: 3px;
+    margin-bottom: 10px
+}
+button {
+    font-size: 1em;
+    margin-bottom: 20px;
+}
