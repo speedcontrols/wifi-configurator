@@ -1,0 +1,5 @@
+* Install PlatformIO, open this project
+* Make a link from appropriate tools/minify.* (depends on your system) to tools/minify
+* Run buildtemplate.sh - this will create template/template.h (for firmware) and template/index.html (for testing in browser only)
+* Just build and flash it using PlatformIO
+* You need to run buildtemplate.sh every time when your HTML changes.
