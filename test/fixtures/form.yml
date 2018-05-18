@@ -1,0 +1,106 @@
+schema:
+  properties:
+    motor:
+      type: object
+      title: Motor params
+      properties:
+        '001':
+          title: Max motor power (watts)
+          description: >
+            Consumed power will be restricted by this value to avoid overload.
+          type: number
+          required: true
+          default: 1000
+          minimum: 100
+          maximum: 1000
+        '002':
+          title: Max motor voltage (volts)
+          description: Usually 220, 110 or 48 volts.
+          type: number
+          required: true
+          default: 220
+          minimum: 48
+          maximum: 220
+        '003':
+          title: RPM at max voltage without load
+          description: >
+            Since we don't use tacho sensor, all RPM-s are calculated relative
+            to this value. Take from motor datasheet or measure with tachometer.
+          type: number
+          required: true
+          default: 20000
+          minimum: 100
+          maximum: 50000
+
+    interface:
+      type: object
+      title: Interface settings
+      properties:
+        100:
+          title: Limit maximal possible RPM
+          description: >
+            Can not be more than motor's max RPM
+          type: number
+          required: true
+          default: 20000
+          minimum: 100
+          maximum: 50000
+        101:
+          title: Limit minimal possible RPM
+          type: number
+          required: true
+          default: 500
+          minimum: 100
+          maximum: 50000
+        102:
+          title: Potentiometer zero zone (in percents)
+          description: In this zone motor will be switched off. Set 0 to disable.
+          type: number
+          required: true
+          default: 5
+          minimum: 0
+          maximum: 20
+
+
+    regulator:
+      type: object
+      title: Speed control settings
+      properties:
+        200:
+          title: Startup time (in seconds)
+          description: >
+            Minimal time to run motor from stopped state to max RPM. Startup is also
+            restricted by max possible motor power, so it's ok to set this param to 0.
+          type: number
+          required: true
+          default: 0
+          minimum: 0
+          maximum: 10
+
+    advanced:
+      type: object
+      title: Advanced settings
+      properties:
+        999:
+          title: Shunt value (mOhms)
+          description: >
+            If you used not default shunt value - update this value for
+            correct regulator work.
+          type: number
+          required: true
+          minimum: 1
+          maximum: 1000
+
+form:
+  - motor
+  - interface
+  - regulator
+  -
+    key: advanced
+    type: fieldset
+    expandable: true
+  -
+    type: submit
+    title: Save
+
+header: Configure your device

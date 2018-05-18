@@ -1,0 +1,27 @@
+.content {
+	max-width: 500px;
+	margin: 0px auto 20px;
+}
+
+.card {
+	border-radius: 5px;
+	border: 1px solid #DDD;
+	background-color: #FBFBFB;
+	padding: 16px;
+}
+
+.expandable > legend {
+	cursor: pointer;
+}
+.expandable > legend::before {
+  content: '\25B8';
+  padding-right: 5px;
+}
+
+.expanded > legend::before {
+  content: '\25BE';
+}
+
+.fatal-error {
+	margin-top: 20px;
+}
