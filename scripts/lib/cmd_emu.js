@@ -1,4 +1,4 @@
-// Emulate responces to command
+// Emulate responses to command
 //
 // C => config
 // W DDD VVV => write
@@ -9,21 +9,38 @@ const read = require('fs').readFileSync;
 const resolve = require('path').resolve;
 const yaml = require('js-yaml').safeLoad;
 const gzip = require('zlib').gzipSync;
+const { iterateSchema } = require('../../src/utils');
 
 const BAD_PARAMS = '1 Bad params';
 
-const memory = {
-  1: 0,
-  2: 35
-};
+let memory = {};
+
+function readConfig() {
+  let config = yaml(read(resolve(__dirname, '../../test/fixtures/form.yml')));
+  let oldMem = memory;
+  memory = {};
+
+  iterateSchema(config, function (value, key) {
+    if (oldMem.hasOwnProperty(key)) {
+      memory[key] = oldMem[key];
+    } else {
+      memory[key] = value.default || 0;
+    }
+
+    // don't send any defaults to the client
+    delete value.default;
+  });
+
+  return config;
+}
 
 // Read on start to make sure content is correct
-yaml(read(resolve(__dirname, '../../test/fixtures/form.yml')));
+readConfig();
 
 module.exports = function (cmd, options = {}) {
   if (cmd === 'C') {
     // Reread form config on each request - useful for development
-    const config = yaml(read(resolve(__dirname, '../../test/fixtures/form.yml')));
+    const config = readConfig();
 
     if (!options.gzip) return `0 ${JSON.stringify(config)}`;
 

@@ -4,7 +4,7 @@ schema:
       type: object
       title: Motor params
       properties:
-        '001':
+        1:
           title: Max motor power (watts)
           description: >
             Consumed power will be restricted by this value to avoid overload.
@@ -13,7 +13,7 @@ schema:
           default: 1000
           minimum: 100
           maximum: 1000
-        '002':
+        2:
           title: Max motor voltage (volts)
           description: Usually 220, 110 or 48 volts.
           type: number
@@ -21,7 +21,7 @@ schema:
           default: 220
           minimum: 48
           maximum: 220
-        '003':
+        3:
           title: RPM at max voltage without load
           description: >
             Since we don't use tacho sensor, all RPM-s are calculated relative
