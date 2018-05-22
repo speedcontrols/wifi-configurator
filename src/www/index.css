@@ -1,13 +1,10 @@
 .content {
 	max-width: 500px;
-	margin: 0px auto 20px;
+	margin: 20px auto;
 }
 
 .card {
-	border-radius: 5px;
-	border: 1px solid #DDD;
 	background-color: #FBFBFB;
-	padding: 16px;
 }
 
 .expandable > legend {
