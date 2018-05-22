@@ -1,15 +1,38 @@
-.content {
+/*
+ Hack default bootstrap styles
+*/
+.content-fluid {
 	max-width: 500px;
 	margin: 20px auto;
 }
 
-.card {
+legend {
+	border-bottom: 1px solid #ddd;
+	margin-bottom: 1rem;
+}
+
+pre {
+	white-space: pre-wrap;
+}
+
+.text-muted {
+	opacity: .7;
+}
+
+/*
+ App styles
+*/
+.form-content {
 	background-color: #FBFBFB;
 }
 
+/*
+ JSON form extras
+*/
 .expandable > legend {
 	cursor: pointer;
 }
+
 .expandable > legend::before {
   content: '\25B8';
   padding-right: 5px;
@@ -17,8 +40,4 @@
 
 .expanded > legend::before {
   content: '\25BE';
-}
-
-.fatal-error {
-	margin-top: 20px;
 }

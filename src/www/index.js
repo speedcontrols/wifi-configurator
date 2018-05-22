@@ -1,4 +1,4 @@
-import utils from '../utils';
+import utils from './utils';
 import 'bootstrap/dist/css/bootstrap.css';
 import './index.css';
 
@@ -8,78 +8,45 @@ const { ungzip } = require('pako/lib/inflate');
 const $ = global.$ = global.jQuery = require('jquery');
 const { JSONForm } = require('json-form');
 
-/* eslint-disable max-len */
-JSONForm.fieldTemplate = function (inner) {
-  return '<div class="<%= cls.groupClass %> jsonform-node jsonform-error-<%= keydash %>' +
-    '<%= elt.htmlClass ? " " + elt.htmlClass : "" %>' +
-    '<%= (node.required && node.formElement && (node.formElement.type !== "checkbox") ? " jsonform-required" : "") %>' +
-    '<%= (node.isReadOnly() ? " jsonform-readonly" : "") %>' +
-    '<%= (node.disabled ? " jsonform-disabled" : "") %>' +
-    '" data-jsonform-type="<%= node.formElement.type %>">' +
-    '<% if (node.title && !elt.notitle && elt.inlinetitle !== true) { %>' +
-      '<label class="<%= cls.labelClass %>" for="<%= node.id %>"><%= node.title %></label>' +
-    '<% } %>' +
-    '<div class="<%= cls.controlClass %>">' +
-      '<% if (node.prepend || node.append) { %>' +
-        '<div class="<%= node.prepend ? cls.prependClass : "" %> ' +
-        '<%= node.append ? cls.appendClass : "" %>">' +
-        '<% if (node.prepend && node.prepend.indexOf("<button ") >= 0) { %>' +
-          '<% if (cls.buttonAddonClass) { %>' +
-            '<span class="<%= cls.buttonAddonClass %>"><%= node.prepend %></span>' +
-          '<% } else { %>' +
-            '<%= node.prepend %>' +
-          '<% } %>' +
-        '<% } %>' +
-        '<% if (node.prepend && node.prepend.indexOf("<button ") < 0) { %>' +
-          '<span class="<%= cls.addonClass %>"><%= node.prepend %></span>' +
-        '<% } %>' +
-      '<% } %>' +
-      inner +
-      '<% if (node.append && node.append.indexOf("<button ") >= 0) { %>' +
-        '<% if (cls.buttonAddonClass) { %>' +
-          '<span class="<%= cls.buttonAddonClass %>"><%= node.append %></span>' +
-        '<% } else { %>' +
-          '<%= node.append %>' +
-        '<% } %>' +
-      '<% } %>' +
-      '<% if (node.append && node.append.indexOf("<button ") < 0) { %>' +
-        '<span class="<%= cls.addonClass %>"><%= node.append %></span>' +
-      '<% } %>' +
-      '<% if (node.prepend || node.append) { %>' +
-        '</div>' +
-      '<% } %>' +
-      '<% if (node.description) { %>' +
-        '<span class="form-text text-muted small jsonform-description"><%= node.description %></span>' +
-      '<% } %>' +
-      '<span class="form-text text-muted small jsonform-errortext" style="display:none;"></span>' +
-    '</div></div>';
-};
+const tpl = require('./templates');
 
-JSONForm.elementTypes.fieldset.template =
-  '<fieldset class="jsonform-node jsonform-error-<%= keydash %> <% if (elt.expandable) { %>expandable<% } %> <%= elt.htmlClass?elt.htmlClass:"" %>" ' +
-  '<% if (id) { %> id="<%= id %>"<% } %>' +
-  ' data-jsonform-type="fieldset">' +
-  '<% if (node.title || node.legend) { %><legend><%= node.title || node.legend %></legend><% } %>' +
-  '<% if (elt.expandable) { %><div class="<%= cls.groupClass %>"><% } %>' +
-  '<%= children %>' +
-  '<% if (elt.expandable) { %></div><% } %>' +
-  '<span class="form-text text-muted small jsonform-errortext" style="display:none;"></span>' +
-  '</fieldset>';
-/* eslint-enable max-len */
+JSONForm.fieldTemplate = tpl.fieldTemplate;
+JSONForm.elementTypes.fieldset.template = tpl.fieldsetTemplate;
+
 
 function fatalError(text) {
-  let msg;
+  $('.msg-content').removeClass('d-none');
+  $('.page-content').addClass('d-none');
+  $('.msg-content').html(tpl.fatalErrorTemplate);
 
-  if (text instanceof Error) msg = JSON.stringify(serializeError(text));
-  else if (typeof msg !== 'string') msg = JSON.stringify(text);
-  else msg = text;
+  // Simple text. Replace all content.
+  if (typeof text === 'string') {
+    $('.msg-fatal').text(text);
+    return;
+  }
 
-  let alert = $('<div>', {
-    'class': 'alert alert-danger fatal-error',
-    text: msg
-  });
-  $('.content').html(alert);
+  // Error. Format message and stack.
+  if (text instanceof Error) {
+    let err = serializeError(text);
+
+    let msg = err.message ? `Error: ${err.message}\n\n` : 'Error:\n\n';
+    let stack = err.stack;
+
+    delete err.message;
+    delete err.stack;
+
+    msg += JSON.stringify(err, null, 2);
+
+    if (stack) msg += '\n\n' + stack;
+
+    $('.msg-fatal-code').text(msg);
+    return;
+  }
+
+  // Other object - show content.
+  $('.msg-fatal-code').text(JSON.stringify(text, null, 2));
 }
+
 
 function runCmd(cmd) {
   return fetch('cmd?' + encodeURIComponent(cmd)).then(
@@ -94,41 +61,70 @@ function runCmd(cmd) {
   });
 }
 
+
 // Load all settings from server sequentially
 // (no reason to do it in parallel 'cause controller sends them one by one anyway)
 //
 function loadSettings(config) {
   let promise = Promise.resolve();
 
+  promise.then(() => {
+    $('.msg-content').removeClass('d-none');
+    $('.msg-content').html(tpl.loadSettingsTemplate);
+  });
+
+  let total = utils.countSchema(config);
+  let progress = 0;
+
   // warning: this function changes config.schema, overwriting the defaults
   utils.iterateSchema(config, function (desc, addr) {
     promise = promise
-      .then(() =>
-        runCmd(`R ${addr}`).then(v => {
-          desc.default = Number(v);
-        })
-      );
+      .then(() => runCmd(`R ${addr}`))
+      .then(v => { desc.default = Number(v); })
+      .then(() => {
+        progress++;
+        $('.msg-loading .progress-bar').width(`${progress / total * 100}%`);
+      });
   });
+
+  promise = promise.then(() => { $('.msg-content').addClass('d-none'); });
 
   return promise;
 }
+
 
 // Save all settings from server sequentially
 //
 function saveSettings(config, values) {
   let promise = Promise.resolve();
 
+  promise.then(() => {
+    $('.page-content').addClass('d-none');
+    $('.msg-content').removeClass('d-none');
+    $('.msg-content').html(tpl.saveSettingsTemplate);
+  });
+
+  let total = utils.countSchema(config);
+  let progress = 0;
+
   utils.iterateSchema(config, function (desc, addr) {
     let value = Number(values[addr]) || 0;
-
     promise = promise
-      .then(() =>
-        runCmd(`W ${addr} ${value}`)
-      );
+      .then(() => runCmd(`W ${addr} ${value}`))
+      .then(() => {
+        progress++;
+        $('.msg-saving .progress-bar').width(`${progress / total * 100}%`);
+      });
+  });
+
+  promise = promise.then(() => {
+    $('.msg-content').addClass('d-none');
+    $('.page-content').removeClass('d-none');
   });
 
   return promise;
 }
+
 
 if (typeof fetch === 'undefined') {
   let msg = 'Your browser is too old, "fetch()" is not supported';
@@ -163,6 +159,8 @@ runCmd('C').then(body => {
       });
     }
   }));
+
+  $('.page-content').removeClass('d-none');
 }).catch(err => {
   fatalError(err);
   console.error(err);

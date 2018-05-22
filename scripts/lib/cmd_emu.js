@@ -9,7 +9,7 @@ const read = require('fs').readFileSync;
 const resolve = require('path').resolve;
 const yaml = require('js-yaml').safeLoad;
 const gzip = require('zlib').gzipSync;
-const { iterateSchema } = require('../../src/utils');
+const { iterateSchema } = require('../../src/www/utils');
 
 const BAD_PARAMS = '1 Bad params';
 

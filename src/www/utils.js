@@ -14,9 +14,19 @@ function iterateSchema_(schema, prefix, fn) {
   return result;
 }
 
-module.exports.iterateSchema = function (config, fn) {
+function iterateSchema(config, fn) {
   iterateSchema_(config.schema.properties || config.schema, '', fn);
+}
+
+module.exports.iterateSchema = iterateSchema;
+
+
+module.exports.countSchema = function (config) {
+  let cnt = 0;
+  iterateSchema(config, () => cnt++);
+  return cnt;
 };
+
 
 // { foo: { bar: 1 } } -> { 'bar': 1 }
 module.exports.flattenObject = function flattenObject(obj) {
