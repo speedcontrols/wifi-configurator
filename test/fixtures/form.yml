@@ -62,7 +62,15 @@ schema:
           default: 5
           minimum: 0
           maximum: 20
-
+        103:
+          title: Set speed from
+          type: number
+          required: true
+          default: 2
+          enum:
+            - 0 # Potentiometer
+            - 1 # External input
+            - 2 # Buttons
 
     regulator:
       type: object
@@ -98,7 +106,20 @@ schema:
 
 form:
   - motor
-  - interface
+  -
+    title: Interface settings
+    type: fieldset
+    items:
+      - interface.100
+      - interface.101
+      - interface.102
+      -
+        key: interface.103
+        titleMap:
+          0: Potentiometer
+          1: External input
+          2: Вuttons
+
   - regulator
   -
     key: advanced

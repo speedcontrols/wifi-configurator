@@ -80,7 +80,9 @@ function loadSettings(config) {
   utils.iterateSchema(config, function (desc, addr) {
     promise = promise
       .then(() => runCmd(`R ${addr}`))
-      .then(v => { desc.default = Number(v); })
+      .then(v => {
+        desc.default = desc.type === 'number' ? Number(v) : v;
+      })
       .then(() => {
         progress++;
         $('.msg-loading .progress-bar').width(`${progress / total * 100}%`);
