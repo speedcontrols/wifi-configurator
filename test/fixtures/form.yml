@@ -66,18 +66,46 @@ schema:
           title: Set speed from
           type: number
           required: true
-          default: 2
+          default: 0
           enum:
             - 0 # Potentiometer
             - 1 # External input
-            - 2 # Buttons
+            - 2 # Buttons (+/-)
+        104:
+          title: On/Off input
+          description: >
+            If enabled, then 'enable' input should be shorten to ground to
+            run motor.
+          type: number
+          required: true
+          default: 0
+          enum:
+            - 0 # Disable
+            - 1 # Enable
+
 
     regulator:
       type: object
-      title: Motor controls
+      title: Motor control
       required: true
       properties:
         200:
+          title: PID algorythm "P" value
+          description: Proportial component
+          type: number
+          required: true
+          default: 5
+          minimum: 0
+          maximum: 100
+        201:
+          title: PID algorythm "I" value
+          description: Integral component
+          type: number
+          required: true
+          default: 10
+          minimum: 0
+          maximum: 100
+        202:
           title: Startup time (in seconds)
           description: >
             Minimal time to run motor from stopped state to max RPM. Startup is also
@@ -117,8 +145,13 @@ form:
         key: interface.103
         titleMap:
           0: Potentiometer
-          1: External input
-          2: Вuttons
+          1: External input (0..10v)
+          2: Вuttons (+/-)
+      -
+        key: interface.104
+        titleMap:
+          0: Disable
+          1: Enable
 
   - regulator
   -

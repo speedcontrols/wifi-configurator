@@ -53,6 +53,8 @@ for each field.
 
 - All form fields MUST have unique names, even if nested schema (with grouped
   fields) used.
-- Use `header` field to define head text
+- Use special `header` field to define head text
 - Arrays in `schema` section are not allowed. But you can use those in `form`
   section for advanced layouts.
+- If you use nested schema (see `test/furtures`), make sure to add `required`
+  fields on ALL levels.
