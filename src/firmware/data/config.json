@@ -1,0 +1,18 @@
+{
+  /* Customize wifi AP name a password for your needs */
+
+  /* WiFi access point name. !!! only english lowercase letters */
+  "wifi_ssid": "cfg",
+
+  /* WiFi password. !!! use english chars, others not tested */
+  "wifi_password": "configure",
+
+
+  /* You probably not need to change params below */
+
+  /* WiFi IP (gateway will be the same) */
+  "wifi_ip": "192.168.4.1",
+
+  /* WiFi net mask */
+  "wifi_netmask": "255.255.255.0"
+}

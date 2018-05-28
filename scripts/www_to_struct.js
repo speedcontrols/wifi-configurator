@@ -12,7 +12,7 @@ const write = require('fs').writeFileSync;
 
 const content = read(path.resolve(__dirname, '../build/index.html'));
 
-const c_encoded = gzip(content)
+/*const c_encoded = gzip(content)
   .toString('hex')
   .match(/../g)
   .map(s => `\\x${s.toUpperCase()}`)
@@ -28,4 +28,7 @@ const char INDEX_HTML_GZ [] PROGMEM = "${c_encoded}";
 #endif
 `;
 
-write(path.resolve(__dirname, '../src/firmware/www_data.hpp'), out);
+write(path.resolve(__dirname, '../src/firmware/www_data.hpp'), out);*/
+
+write(path.resolve(__dirname, '../src/firmware/data/www/index.html'), content);
+write(path.resolve(__dirname, '../src/firmware/data/www/index.html.gz'), gzip(content));

@@ -7,7 +7,8 @@
     "lint": "eslint .",
     "build-www": "npm run lint && webpack && ./scripts/www_to_struct.js",
     "www": "npm run lint && NODE_ENV=development webpack-dev-server",
-    "test": "mocha && npm run build-www"
+    "test": "mocha && npm run build-www",
+    "flash": "pio run --target upload && pio run --target uploadfs"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",

@@ -20,11 +20,24 @@ you need. After config complete - remove Wemos board from your device. Easy!
 ## How to flash firmware
 
 First, you need [Wemos D1 mini](https://www.aliexpress.com/wholesale?SearchText=Wemos+D1+mini)
-board, connected via USB to your computer.
+board, connected via USB to your computer (4MB version).
 
-Now setup software:
+1. Install PlatformIO IDE. Follow instructions [here](http://docs.platformio.org/en/latest/ide/pioide.html).
+   We use PIO for Atom, but PIO for VSCode should be ok too.
+   - Make sure you've [installed](http://docs.platformio.org/en/latest/installation.html#troubleshooting)
+     udev rules (linux) or device drivers (windows).
+2. Clone this repo or download via zip archive.
+3. Edit wifi password in `/src/firmware/data/config.json`, tune other params
+   if you wish.
+4. Open this project in installed IDE.
+5. Open `PlatformIO` -> `Terminal` -> `New Terminal`
 
-**TBD**
+Now type this commands in terminat window:
+
+```bash
+pio run --target upload
+pio run --target uploadfs
+```
 
 
 ## How thing work
@@ -50,10 +63,17 @@ communications.
   device emulator.
 - `npm run build-www` - update firmware files with new www content.
 
-TBD:
+In PlatformIO:
 
-- build firmware
-- UART responder (low level emulator to test firmware on bare metal)
+```bash
+pio run --target upload
+pio run --target uploadfs
+```
+
+First command compiles sources and upload firmware to board. Second one builds
+SPIFFS image and uploads it. Also, you can run those commands via IDE menus.
+
+`IDE` -> `PlatformIO` -> `Monitor` - starts monitor to see debug messages.
 
 
 ## License
