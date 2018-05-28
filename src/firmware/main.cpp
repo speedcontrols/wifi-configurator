@@ -9,9 +9,12 @@
 
 CFG cfg;
 
-
 DNSServer dnsServer;
 ESP8266WebServer webServer(80);
+
+
+// Default button pinout for many shield boards
+#define BTN_PIN D3
 
 
 void toCaptivePortal()
@@ -89,8 +92,18 @@ void setup() {
 
   loadConfig(cfg);
 
+  // If configured - wait for button press
   if (cfg.button) {
-    Serial.println("We had to wait for button click, but not implemented yet");
+    pinMode(BTN_PIN, INPUT_PULLUP);
+    Serial.println("Waiting for button click...");
+    while (true) {
+      while (digitalRead(BTN_PIN) == HIGH) {
+        yield(); // Avoid WDT run
+      }
+      delay(300);
+      if (digitalRead(BTN_PIN) != HIGH) break;
+    }
+    Serial.println("Button pressed, continue");
   }
 
   // Run WiFi
