@@ -1,1 +1,1 @@
-Edit `config.json` to customize your WiFi settings.
+Edit `config.json5` to customize your WiFi settings.

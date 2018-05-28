@@ -27,7 +27,7 @@ board, connected via USB to your computer (4MB version).
    - Make sure you've [installed](http://docs.platformio.org/en/latest/installation.html#troubleshooting)
      udev rules (linux) or device drivers (windows).
 2. Clone this repo or download via zip archive.
-3. Edit wifi password in `/src/firmware/data/config.json`, tune other params
+3. Edit wifi password in `/src/firmware/data/config.json5`, tune other params
    if you wish.
 4. Open this project in installed IDE.
 5. Open `PlatformIO` -> `Terminal` -> `New Terminal`

@@ -1,0 +1,23 @@
+{
+  ///* Customize wifi AP name a password for your needs */
+
+  /* WiFi access point name. !!! use english letters, others not tested */
+  "wifi_ssid": "cfg",
+
+  /* WiFi password, 8 chars min. !!! use english chars, others not tested */
+  "wifi_password": "configure",
+
+
+  /* You probably not need to change params below */
+
+  /* WiFi IP (gateway will be the same). Setup page:
+     http://192.168.4.1
+  */
+  "wifi_ip": "192.168.4.1",
+  /* WiFi net mask */
+  "wifi_netmask": "255.255.255.0",
+  /* Also announce as `cfg.local` in local network */
+  "name_local": "cfg",
+  /* if `true` - WiFi starts ONLY after button at D3 pin pressed */
+  "button": false
+}

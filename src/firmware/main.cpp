@@ -5,16 +5,9 @@
 #include <ESP8266mDNS.h>
 #include <FS.h>
 
-const byte DNS_PORT = 53;
+#include <config.hpp>
 
-IPAddress apIP(192, 168, 4, 1);
-IPAddress netMsk(255, 255, 255, 0);
-
-const char *wifi_ssid = "cfg";
-const char *wifi_password = "configure";
-const char *hostname = "cfg";
-String host = "";
-String captive_portal_url = "http://";
+CFG cfg;
 
 
 DNSServer dnsServer;
@@ -23,7 +16,7 @@ ESP8266WebServer webServer(80);
 
 void toCaptivePortal()
 {
-  webServer.sendHeader("Location", captive_portal_url, true);
+  webServer.sendHeader("Location", cfg.captive_portal_url, true);
   webServer.send(302, "text/plain", "");
   // Stop is needed because we sent no content length (empty content)
   webServer.client().stop();
@@ -35,7 +28,7 @@ void handleRoot()
 {
   // Respond only for our IP, redirect the rest
   String h = webServer.header("Host");
-  if (h != host && h != "") {
+  if (h != cfg.host && h != "") {
     toCaptivePortal();
     return;
   }
@@ -63,7 +56,7 @@ void handleRoot()
     file = SPIFFS.open(index_path, "r");
     webServer.sendHeader("Vary", "Accept-Encoding");
   }
-  // streamer adds "Content-Encoding: gzip" if file name ends with `.gz`
+  // `streamer` adds "Content-Encoding: gzip" if file name ends with `.gz`
   // and content-type is NOT gzip
   webServer.streamFile(file, "text/html");
   file.close();
@@ -94,28 +87,30 @@ void setup() {
   // Init FS
   SPIFFS.begin();
 
+  loadConfig(cfg);
+
+  if (cfg.button) {
+    Serial.println("We had to wait for button click, but not implemented yet");
+  }
+
   // Run WiFi
   WiFi.mode(WIFI_AP);
-  WiFi.softAPConfig(apIP, apIP, netMsk);
-  WiFi.softAP(wifi_ssid, wifi_password);
-
-  host += apIP.toString();
-  // Calculate Captive Portal URL for redirects
-  captive_portal_url += host;
+  WiFi.softAPConfig(cfg.ip, cfg.ip, cfg.mask);
+  WiFi.softAP(cfg.wifi_ssid.c_str(), cfg.wifi_password.c_str());
 
   delay(500);
   Serial.print("AP IP address: ");
   Serial.println(WiFi.softAPIP());
 
-  // Setup fake DNS server - redirect all domains to apIP
+  // Setup fake DNS server - redirect all domains to `cfg.ip`
   dnsServer.setTTL(5); // reduce cache time, but avoid issues with 0
   dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
-  dnsServer.start(DNS_PORT, "*", apIP);
+  dnsServer.start(53/*dns port*/, "*", cfg.ip);
 
   Serial.println("DNS stub started");
 
   // Setup MDNS responder
-  if (!MDNS.begin(hostname)) {
+  if (!MDNS.begin(cfg.name_local.c_str())) {
     Serial.println("Error setting up MDNS responder!");
   } else {
     // Announce service
